@@ -3,6 +3,8 @@ import 'package:weather_app/services/weather_api_client.dart';
 import 'package:weather_app/view/additional_information.dart';
 import 'package:weather_app/view/current_widget.dart';
 
+import 'model/weather_model.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -29,16 +31,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // call the api in init state function
   WeatherApiClient client = WeatherApiClient();
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    client.getCurrentWeather("Georgia");
-    //Call the api by future builder widget
-  }
+  Weather? data;
+  
 
   Future<void> getData() async{
-    data = await client.get
+    data = await client.getCurrentWeather("Pune");
   }
 
   @override
@@ -60,6 +57,35 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: FutureBuilder(
+        future: getData(), 
+        builder: (context, snapshot) { 
+          if(snapshot.connectionState == ConnectionState.done){
+            // display here if we get data from api
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                currentWeather(Icons.wb_sunny_rounded, "${data!.temp}", "${data!.cityName}"),
+                SizedBox(height: 60.0,),
+                Text(
+                  "Additional Information",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Color(0xdd212121),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Divider(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                additionalInformation("${data!.wind}", "${data!.humidity}", "${data!.pressure}", "${data!.feels_like}")
+              ],
+            );
+          }else if(snapshot == ConnectionState.waiting){
+            return Center(child: CircularProgressIndicator(),);
+          }
+          return Container();
+        },
         
       ),
     );
