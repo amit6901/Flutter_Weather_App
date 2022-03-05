@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/services/weather_api_client.dart';
 import 'package:weather_app/view/additional_information.dart';
 import 'package:weather_app/view/current_widget.dart';
 
@@ -26,6 +27,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // call the api in init state function
+  WeatherApiClient client = WeatherApiClient();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    client.getCurrentWeather("Georgia");
+    //Call the api by future builder widget
+  }
+
+  Future<void> getData() async{
+    data = await client.get
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,31 +59,8 @@ class _HomePageState extends State<HomePage> {
           color: Colors.black,
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // custom widget for the app
-          currentWeather(Icons.wb_sunny_rounded, "32.3", "Pune"),
-          SizedBox(
-            height: 60.0,
-          ),
-          Text(
-            "Additional Information",
-            style: TextStyle(
-              fontSize: 24.0,
-              color: Color(0xdd212121),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Divider(),
-          SizedBox(
-            height: 20.0,
-          ),
-          //additional information widget
-          additionalInformation("24", "2", "1014", "24.6"),
-          // UI is ready
-          // starting of integrating the API
-        ],
+      body: FutureBuilder(
+        
       ),
     );
   }
